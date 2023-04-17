@@ -1,0 +1,6 @@
+include ':lib_annotation'
+include ':lib_compiler'
+include ':app'
+rootProject.name = "MineDemo"
+include ':lib_leetcode'
+include ':lib_plugin'

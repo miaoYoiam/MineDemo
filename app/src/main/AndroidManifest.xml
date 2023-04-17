@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.minedemo">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- google pay -->
+    <uses-permission android:name="android.permission.GET_TASKS" /> <!-- icon badge for android home -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" /> <!-- icon badge for sony home -->
+    <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" /> <!-- icon badge for HTC home -->
+    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" />
+    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" /> <!-- icon badge for SAMSUNG home -->
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" /> <!-- icon badge for anddoes home -->
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" /> <!-- icon badge for Vivo -->
+    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
+    <uses-permission android:name="com.bbk.launcher2.permission.READ_SETTINGS" /> <!-- for solid -->
+    <uses-permission android:name="com.bbk.launcher2.permission.WRITE_SETTINGS" /> <!-- for huawei -->
+    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" /> <!-- for ZUK -->
+    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" /> <!-- for OPPO -->
+    <uses-permission android:name="android.permission.READ_APP_BADGE" />
+    <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS" /> <!-- for EvMe -->
+    <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" />
+    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+
+    <uses-permission-sdk-23 android:name="android.permission.GET_ACCOUNTS" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".activity.TestOpenGLActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.TestMediaMuxerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.TestViewDraw0"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.TestVolatileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.TestViewPreviewActivity"
+            android:exported="false" />
+        <activity android:name=".activity.RouterActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.TestGlideTransformActivity" />
+        <activity android:name=".activity.SurfaceViewActivity" />
+        <activity android:name=".activity.LuckyDrawActivity" />
+        <activity android:name=".TestActivity" />
+        <activity android:name=".activity.MainActivity2" />
+        <activity android:name=".widget.AutoViewActivity" />
+        <activity android:name=".activity.ToggleButtonActivity" />
+        <activity android:name=".activity.RecyclerViewActivity" />
+        <activity android:name=".activity.HandlerActivity" />
+        <activity android:name=".activity.MainActivity" />
+
+        <activity
+            android:name="com.example.minedemo.activity.WifiP2PActivity"
+            android:exported="false"
+
+            />
+    </application>
+
+</manifest>

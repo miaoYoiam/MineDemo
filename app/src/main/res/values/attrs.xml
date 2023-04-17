@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="HorizontalLoadProgressBar">
+        <attr name="progress_color" format="color" />
+        <attr name="progress_text_label" format="string" />
+        <attr name="progress_text_size" format="dimension" />
+        <attr name="progress_bg_color" format="color" />
+        <attr name="progress_radius" format="dimension" />
+        <attr name="progress_text_color" format="color" />
+
+    </declare-styleable>
+
+
+    <declare-styleable name="KaraFloatLayout">
+        <attr name="android:gravity" />
+        <attr name="childHorizontalSpacing" format="dimension" />
+        <attr name="childVerticalSpacing" format="dimension" />
+        <attr name="android:maxLines" format="integer" />
+        <attr name="maxNumber" format="integer" />
+    </declare-styleable>
+</resources>
