@@ -9,12 +9,13 @@ import org.objectweb.asm.Opcodes
  * Create by cxzheng on 2019/6/4
  * Class Visitor
  */
-class TraceClassVisitor(api: Int, cv: ClassVisitor?, var traceTestConfig: TestConfig) : ClassVisitor(api, cv) {
+class TransFormClassVisitor(api: Int, cv: ClassVisitor?, var traceTestConfig: AsmConfig) : ClassVisitor(api, cv) {
 
     private var className: String? = null
     private var isABSClass = false
-    private var isBeatClass = false
+    private var isRootDelegateClass = false
     private var isConfigTraceClass = false
+
 
     override fun visit(
         version: Int,
@@ -34,8 +35,8 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor?, var traceTestConfig: TestCo
 
         //插桩代码所属类
         val resultClassName = name?.replace(".", "/")
-        if (resultClassName == traceTestConfig.mBeatClass) {
-            this.isBeatClass = true
+        if (resultClassName == traceTestConfig.mRootDelegateClass) {
+            this.isRootDelegateClass = true
         }
 
         //是否是配置的需要插桩的类
@@ -43,9 +44,9 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor?, var traceTestConfig: TestCo
             isConfigTraceClass = traceTestConfig.isConfigTraceClass(className)
         }
 
-        val isNotNeedTraceClass = isABSClass || isBeatClass || !isConfigTraceClass
-        if (traceTestConfig.mIsNeedLogTraceInfo && !isNotNeedTraceClass) {
-            println("MethodTraceMan-trace-class: ${className ?: "未知"}")
+        val isNotNeedTraceClass = isABSClass || isRootDelegateClass || !isConfigTraceClass
+        if (AsmConfig.NEED_LOG_TRANSFORM_INFO && !isNotNeedTraceClass) {
+            println("Transform-class: ${className ?: "未知"}  ")
         }
     }
 
@@ -57,12 +58,12 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor?, var traceTestConfig: TestCo
         exceptions: Array<out String>?
     ): MethodVisitor {
         val isConstructor = MethodFilter.isConstructor(name)
-        //抽象方法、构造方法、不是插桩范围内的方法，则不进行插桩
-        return if (isABSClass || isBeatClass || !isConfigTraceClass || isConstructor) {
+        val validVisit = !isABSClass && !isRootDelegateClass && !isConfigTraceClass && !isConstructor
+        return if (!validVisit) {
             super.visitMethod(access, name, desc, signature, exceptions)
         } else {
             val mv = cv.visitMethod(access, name, desc, signature, exceptions)
-            TraceMethodVisitor(api, mv, access, name, desc, className, traceTestConfig)
+            TransFormMethodVisitor(api, mv, access, name, desc, className, traceTestConfig)
         }
     }
 

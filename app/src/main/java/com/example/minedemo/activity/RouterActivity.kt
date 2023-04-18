@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.minedemo.R
-import com.example.minedemo.trace.TraceMan
+import com.example.minedemo.asm.AsmRootDelegate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,12 +20,12 @@ class RouterActivity : AppCompatActivity() {
     }
 
     fun startTrace(view: View) {
-        TraceMan.startCollectMethodCost()
+        AsmRootDelegate.startCollectMethodCost()
     }
 
     fun endTrace(view: View) {
         lifecycleScope.launch {
-            val list = TraceMan.endCollectMethodCost()
+            val list = AsmRootDelegate.endCollectMethodCost()
             for (i in list.indices) {
                 val item = list[i]
                 Log.w("SimpleTrace", "Method:${item.name}  costTime:${item.costTime} ")

@@ -1,6 +1,5 @@
-package com.example.minedemo.trace;
+package com.example.minedemo.asm;
 
-import android.os.Build;
 import android.os.Looper;
 import android.os.Trace;
 import android.util.Log;
@@ -14,24 +13,26 @@ import java.util.List;
  * Create by cxzheng on 2019/8/26
  * 全方法插桩内容
  */
-public class TraceMan {
+public class AsmRootDelegate {
 
     public static List<Entity> methodList = new LinkedList<>();
 
-    public static void start(String name) {
-        name = "ASM_" + name;
+    public static void startTrace(String name) {
         Trace.beginSection(name);
         synchronized (methodList) {
             methodList.add(new Entity(name, System.currentTimeMillis(), true, isInMainThread()));
         }
     }
 
-    public static void end(String name) {
-        name = "ASM_" + name;
+    public static void endTrace(String name) {
         Trace.endSection();
         synchronized (methodList) {
             methodList.add(new Entity(name, System.currentTimeMillis(), false, isInMainThread()));
         }
+    }
+
+    public static void logger(String name) {
+        Log.i("TraceMan", String.format("=====> test logger method name: %s", name));
     }
 
 

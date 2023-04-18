@@ -14,7 +14,6 @@ import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.gradle.api.Project
-import org.gradle.internal.impldep.org.apache.ivy.util.FileUtil
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
@@ -26,8 +25,8 @@ import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 
 
-import com.example.plugin.TestConfig
-import com.example.plugin.TraceClassVisitor
+import com.example.plugin.AsmConfig
+import com.example.plugin.TransFormClassVisitor
 
 import static org.objectweb.asm.ClassReader.EXPAND_FRAMES
 
@@ -35,49 +34,34 @@ import static org.objectweb.asm.ClassReader.EXPAND_FRAMES
  * custom transform: tranform classes before dex
  * inputType、scope、isIncremental主要根据 task:transformClassesWithDex来设定
  */
-class TraceManTransform extends Transform {
+class MixTransform extends Transform {
 
     private Project project
 
-    public TraceManTransform(Project project) {
+    public MixTransform(Project project) {
         this.project = project
+    }
+
+    private AsmConfig initConfig() {
+        def configuration = project.traceMan
+        AsmConfig config = new AsmConfig()
+        config.MPluginConfigFile = configuration.traceConfigFile
+        return config
     }
 
     @Override
     public void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
-        println '[MethodTraceMan]: transform() start'
-
-//
-//        def inputs = transformInvocation.inputs
-//        def outputProvider = transformInvocation.outputProvider
-//
-//        inputs.each {
-//            it.jarInputs.each {
-//                File dest = outputProvider.getContentLocation(it.name, it.contentTypes, it.scopes, Format.JAR)
-//                println("拦截Jar: ${it.file}, Dest ${dest}")
-//                FileUtils.copyFile(it.file, dest)
-//            }
-//
-//            it.directoryInputs.each {
-//                File dest = outputProvider.getContentLocation(it.name, it.contentTypes, it.scopes, Format.DIRECTORY)
-//                println("拦截Dir: ${it.file}, Dest ${dest}")
-//                FileUtils.copyDirectory(it.file, dest)
-//            }
-//        }
-//
-//        println '[MethodTraceMan]: transform() end'
-
 
         def traceManConfig = project.traceMan
         String output = traceManConfig.output
         if (output == null || output.isEmpty()) {
-            traceManConfig.output = project.getBuildDir().getAbsolutePath() + File.separator + "traceman_output"
+            traceManConfig.output = project.getBuildDir().getAbsolutePath() + File.separator + "transform_output"
         }
 
         if (traceManConfig.open) {
             //读取配置
-            TestConfig traceConfig = initConfig()
-            traceConfig.parseTraceConfigFile()
+            AsmConfig traceConfig = initConfig()
+            traceConfig.setPluginConfigFile()
 
             Collection<TransformInput> inputs = transformInvocation.inputs
             TransformOutputProvider outputProvider = transformInvocation.outputProvider
@@ -97,15 +81,6 @@ class TraceManTransform extends Transform {
             }
         }
     }
-
-    TestConfig initConfig() {
-        def configuration = project.traceMan
-        TestConfig config = new TestConfig()
-        config.MTraceConfigFile = configuration.traceConfigFile
-        config.MIsNeedLogTraceInfo = configuration.logTraceInfo
-        return config
-    }
-
 
     @Override
     String getName() {
@@ -130,7 +105,7 @@ class TraceManTransform extends Transform {
     /**
      * ASM的访问者模式进行插桩
      */
-    static void traceSrcFiles(DirectoryInput directoryInput, TransformOutputProvider outputProvider, TestConfig traceConfig) {
+    static void traceSrcFiles(DirectoryInput directoryInput, TransformOutputProvider outputProvider, AsmConfig traceConfig) {
         if (directoryInput.file.isDirectory()) {
             directoryInput.file.eachFileRecurse { File file ->
                 def name = file.name
@@ -140,7 +115,7 @@ class TraceManTransform extends Transform {
                     //利用ASM的api对class文件进行访问
                     ClassReader classReader = new ClassReader(file.bytes)
                     ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
-                    ClassVisitor cv = new TraceClassVisitor(Opcodes.ASM5, classWriter, traceConfig)
+                    ClassVisitor cv = new TransFormClassVisitor(Opcodes.ASM5, classWriter, traceConfig)
                     classReader.accept(cv, EXPAND_FRAMES)
                     byte[] code = classWriter.toByteArray()
                     FileOutputStream fos = new FileOutputStream(
@@ -159,7 +134,7 @@ class TraceManTransform extends Transform {
     }
 
 
-    static void traceJarFiles(JarInput jarInput, TransformOutputProvider outputProvider, TestConfig traceConfig) {
+    static void traceJarFiles(JarInput jarInput, TransformOutputProvider outputProvider, AsmConfig traceConfig) {
         if (jarInput.file.getAbsolutePath().endsWith(".jar")) {
             //重命名输出文件,因为可能同名,会覆盖
             def jarName = jarInput.name
@@ -190,11 +165,9 @@ class TraceManTransform extends Transform {
                     //用于拼接字节码
                     ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                     //定义在读取class字节码时会触发的事件，比如类头解析完成、注册解析、字段解析、方法解析等
-                    ClassVisitor cv = new TraceClassVisitor(Opcodes.ASM6, classWriter, traceConfig)
-
+                    ClassVisitor cv = new TransFormClassVisitor(Opcodes.ASM6, classWriter, traceConfig)
                     //给vistor 传递 jvm类构文件结构
                     classReader.accept(cv, EXPAND_FRAMES)
-
                     byte[] code = classWriter.toByteArray()
                     jarOutputStream.write(code)
                 } else {

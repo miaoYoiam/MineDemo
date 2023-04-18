@@ -11,7 +11,6 @@ import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import com.example.minedemo.R
-import com.example.minedemo.trace.TraceMan
 import kotlinx.android.synthetic.main.activity_test_view_preview.*
 
 class TestViewPreviewActivity : AppCompatActivity() {
