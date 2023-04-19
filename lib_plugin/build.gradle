@@ -2,20 +2,8 @@ apply plugin: 'kotlin'
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'maven'
-apply plugin: 'maven-publish'
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-                groupId = 'com.example.plugins'
-                artifactId = 'asm.plugin'
-                version = '1.0.0'
-            }
-        }
-    }
-}
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -24,16 +12,18 @@ dependencies {
     implementation localGroovy()
 
     implementation 'com.android.tools.build:gradle:4.0.2'
-    implementation 'com.github.jitpack:android-example:1.0.1'
 //    implementation 'org.javassist:javassist:3.20.0-GA'
 //    implementation 'org.codehaus.groovy:groovy-all:3.0.5'
 }
 
 repositories {
     google()
+    jcenter()
+}
+
+repositories {
     mavenCentral()
     jcenter()
-    maven { url "https://jitpack.io" }
 }
 
 uploadArchives {
