@@ -37,16 +37,6 @@ uploadArchives {
     }
 }
 
-//sourceSets {
-//    main {
-//        groovy { srcDir "src/main" }
-
-//        java {
-//            srcDir '../lib_plugin/src/main/java'
-//        }
-//    }
-//}
-
 compileGroovy {
     dependsOn tasks.getByPath('compileKotlin')
     classpath += files(compileKotlin.destinationDir)
