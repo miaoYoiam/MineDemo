@@ -3,4 +3,7 @@ include ':lib_compiler'
 include ':app'
 rootProject.name = "MineDemo"
 include ':lib_leetcode'
-include ':lib_plugin'
+//include ':lib_plugin'
+include ':lib_gson_adapter'
+//include ':lib_scan'
+//include ':lib_scan_base'

@@ -15,8 +15,8 @@
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/lib_annotation" />
             <option value="$PROJECT_DIR$/lib_compiler" />
+            <option value="$PROJECT_DIR$/lib_gson_adapter" />
             <option value="$PROJECT_DIR$/lib_leetcode" />
-            <option value="$PROJECT_DIR$/lib_plugin" />
           </set>
         </option>
       </GradleProjectSettings>
