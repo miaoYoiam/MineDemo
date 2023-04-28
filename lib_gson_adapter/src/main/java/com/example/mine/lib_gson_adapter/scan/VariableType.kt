@@ -1,6 +1,6 @@
 package com.example.mine.lib_gson_adapter.scan
 
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.base.JsonTokenDelegate
 import com.example.mine.lib_gson_adapter.base.Variance
 
@@ -13,9 +13,9 @@ class VariableType(
     override val nullable: Boolean,
     override val variance: Variance,
     override val jsonTokenName: JsonTokenDelegate,
-    override val generics: List<IType>
-): IType() {
-    override fun copy(nullable: Boolean, variance: Variance): IType {
+    override val generics: List<ElementType>
+): ElementType() {
+    override fun copy(nullable: Boolean, variance: Variance): ElementType {
         return VariableType(
             rawType = this.rawType,
             nullable = nullable,

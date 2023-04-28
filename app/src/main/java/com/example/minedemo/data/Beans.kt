@@ -5,12 +5,10 @@ import com.google.gson.annotations.SerializedName
 
 @PokeBean
 data class Foo(
-    @SerializedName("foo_int")
-    val intValue: Int = 0,
-    @SerializedName("foo_string")
-    val stringValue: String = "",
-    @SerializedName("foo_long")
-    val longValue: Long = 0L,
+//    override val parentIntValue: Int = 0,
+//    override val parentStringValue: String = "",
+//    override val parentLongValue: Long = 0L,
+
     @SerializedName("foo_boolean")
     val booleanValue: Boolean = false,
     @SerializedName("foo_double")
@@ -35,7 +33,25 @@ data class Foo(
     val testEnum: TestEnum = TestEnum.HELLO,
     @SerializedName("var_bean")
     val varFieldBean: VarFieldBean = VarFieldBean()
-)
+) : FooParent() {
+
+    //todo body super里面的参数 val 不应该编译
+    var bodyValIntValue: Int = 0
+
+    var bodyVarIntValue: Int = 0
+}
+
+open class FooParent(
+    open var parentIntValue: Int = 0,
+    @SerializedName("foo_string")
+    open var parentStringValue: String = "",
+    @SerializedName("foo_long")
+    open var parentLongValue: Long = 0L
+) {
+    var parentBodyValIntValue: Int = 0
+
+    var parentBodyVarIntValue: Int = 0
+}
 
 @PokeBean
 data class Bar(
@@ -79,6 +95,8 @@ data class VarFieldBean(
 
     @SerializedName("var_out_constructor_list_long")
     var outConstructorListLongValue: List<Long> = listOf()
+
+    var testVal: Int = 0
 }
 
 

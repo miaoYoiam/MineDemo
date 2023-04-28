@@ -3,19 +3,19 @@ package com.example.mine.lib_gson_adapter.scan
 import com.example.mine.lib_gson_adapter.base.*
 import javax.lang.model.element.Element
 
-data class KaptKtField(
+data class KtValueField(
     override val isFinal: Boolean,
     override val fieldName: String,
     override val keys: List<String>,
-    override val type: IType,
+    override val type: ElementType,
     override val initializer: FieldInitializer,
     override val declarationScope: DeclarationScope,
     override val transient: Boolean,
     override val target: Element?
-) : IFiled(), IElementOwner {
+) : ElementFiled(), IElementOwner {
 
-    override fun copy(declarationScope: DeclarationScope): IFiled {
-        return KaptKtField(
+    override fun copy(declarationScope: DeclarationScope): ElementFiled {
+        return KtValueField(
             isFinal = this.isFinal,
             fieldName = this.fieldName,
             keys = this.keys,

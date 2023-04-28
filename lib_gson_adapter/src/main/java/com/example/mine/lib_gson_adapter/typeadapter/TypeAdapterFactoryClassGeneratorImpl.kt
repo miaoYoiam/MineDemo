@@ -3,7 +3,7 @@ package com.example.mine.lib_gson_adapter.typeadapter
 import com.example.mine.lib_gson_adapter.GSON
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.TYPE_TOKEN
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.base.asTypeName
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
@@ -17,7 +17,7 @@ internal class TypeAdapterFactoryClassGeneratorImpl(
 ) : TypeAdapterFactoryGenerator {
     override fun generate(
         typeAdapterFactoryName: String,
-        classToTypeAdapters: Set<Pair<IType, IType>>
+        classToTypeAdapters: Set<Pair<ElementType, ElementType>>
     ): TypeSpec {
         val typeAdapterFactoryClassName = ClassName.bestGuess(typeAdapterFactoryName)
         return TypeSpec
@@ -27,7 +27,7 @@ internal class TypeAdapterFactoryClassGeneratorImpl(
             .build()
     }
 
-    private fun generateCreateFunc(classToTypeAdapters: Set<Pair<IType, IType>>): FunSpec {
+    private fun generateCreateFunc(classToTypeAdapters: Set<Pair<ElementType, ElementType>>): FunSpec {
         val returnType = TypeAdapter::class.asClassName()
             .parameterizedBy(TypeVariableName.invoke("T")).copy(nullable = true)
 

@@ -4,7 +4,7 @@ import com.example.mine.lib_gson_adapter.GSON
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.TypeAdapterClassGenConfig
 import com.example.mine.lib_gson_adapter.base.ClassScanner
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.base.asTypeName
 import com.example.mine.lib_gson_adapter.base.parameterizedBy
 import com.example.mine.lib_gson_adapter.typeadapter.generator.functions.read.FieldGenerator
@@ -27,7 +27,7 @@ internal class TypeAdapterGeneratorImpl(private val logger: Logger) : TypeAdapte
 
     override fun generate(
         scanner: ClassScanner,
-        classFilter: Set<IType>,
+        classFilter: Set<ElementType>,
         config: TypeAdapterClassGenConfig
     ): TypeSpec {
         preCheckKtType(scanner.classType, "generate() >>>")
@@ -51,7 +51,7 @@ internal class TypeAdapterGeneratorImpl(private val logger: Logger) : TypeAdapte
             .build()
     }
 
-    private fun setClassFilter(classes: Set<IType>) {
+    private fun setClassFilter(classes: Set<ElementType>) {
         val classFilterMap = classes.map {
             preCheckKtType(it, "setClassFilter() >>>")
             it.rawType to it
@@ -59,13 +59,18 @@ internal class TypeAdapterGeneratorImpl(private val logger: Logger) : TypeAdapte
         fieldGenerator.setClassFilter(classFilterMap)
     }
 
+    /**
+     * 找到成员变量里面是 object 类型的创建adapter
+     */
     private fun TypeSpec.Builder.addClassBodyFields(
         scanner: ClassScanner,
         config: TypeAdapterClassGenConfig
     ): TypeSpec.Builder = apply {
         scanner.field.mapNotNull { ktField ->
+            logger.i("---|--| addClassBodyFields type:${ktField.type}  ")
             ktField.type.dfs { jsonTokenName.isObject() }.firstOrNull()
         }.distinctBy {
+            logger.i("---|--|--| addClassBodyFields rawType:${it.rawType}  ")
             it.rawType
         }.map {
             fieldGenerator.generateByKtType(scanner, it)
@@ -88,7 +93,7 @@ internal class TypeAdapterGeneratorImpl(private val logger: Logger) : TypeAdapte
         addFunction(writeFunctionGenerator.generate(scanner, config))
     }
 
-    private fun preCheckKtType(className: IType, tag: String) {
+    private fun preCheckKtType(className: ElementType, tag: String) {
         if (className.generics.isNotEmpty()) {
             logger.e("$tag illegal className ${className.to2String()}", className)
         }

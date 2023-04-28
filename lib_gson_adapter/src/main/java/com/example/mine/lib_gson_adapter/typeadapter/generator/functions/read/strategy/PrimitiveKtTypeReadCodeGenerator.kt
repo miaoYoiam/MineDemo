@@ -4,7 +4,7 @@ import com.google.gson.internal.bind.TypeAdapters
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.READER
 import com.example.mine.lib_gson_adapter.TypeAdapterClassGenConfig
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.base.JsonTokenDelegate
 import com.example.mine.lib_gson_adapter.base.asTypeName
 import com.example.mine.lib_gson_adapter.base.kotlinPrimitiveType
@@ -19,7 +19,7 @@ internal class PrimitiveKtTypeReadCodeGenerator(
 
     override fun enterExpectTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
         val tempFieldName = ktType.getReadingTempFieldName()
@@ -33,7 +33,7 @@ internal class PrimitiveKtTypeReadCodeGenerator(
 
     override fun enterNullTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
         when {
@@ -58,7 +58,7 @@ internal class PrimitiveKtTypeReadCodeGenerator(
 
     override fun enterOtherTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
         if (strictType) {
@@ -77,7 +77,7 @@ internal class PrimitiveKtTypeReadCodeGenerator(
         }
     }
 
-    private fun getGsonInternalTypeAdapterName(ktType: IType): String {
+    private fun getGsonInternalTypeAdapterName(ktType: ElementType): String {
         return when (ktType.jsonTokenName) {
             JsonTokenDelegate.INT -> "INTEGER"
             JsonTokenDelegate.LONG -> "LONG"

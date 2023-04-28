@@ -2,7 +2,7 @@ package com.example.mine.lib_gson_adapter.typeadapter.generator.functions.read.s
 
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.TypeAdapterClassGenConfig
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.typeadapter.generator.functions.read.strategy.base.KtTypeReadCodeGenerator
 import com.squareup.kotlinpoet.CodeBlock
 
@@ -12,7 +12,7 @@ internal class KtTypeReadCodeGeneratorImpl(
 ) : KtTypeReadCodeGenerator {
 
     override fun generate(
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ): CodeBlock {
         return when {

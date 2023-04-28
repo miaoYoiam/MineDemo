@@ -1,9 +1,10 @@
-package com.example.mine.lib_gson_adapter.scan
+package com.example.mine.lib_gson_adapter.scan.resolver
 
 import com.example.mine.lib_gson_adapter.base.DeclarationScope
 import com.example.mine.lib_gson_adapter.base.FieldInitializer
-import com.example.mine.lib_gson_adapter.base.IFiled
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementFiled
+import com.example.mine.lib_gson_adapter.base.ElementType
+import com.example.mine.lib_gson_adapter.scan.KtValueField
 import com.google.gson.annotations.SerializedName
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmProperty
@@ -19,9 +20,10 @@ class KmPropertyResolver(
     private val kmProperty: KmProperty
 ) {
 
-    fun resolveKmProperty(): IFiled {
+    fun resolveKmProperty(): ElementFiled {
         val fieldName = kmProperty.name
         val isFinal = !Flag.Property.IS_VAR(kmProperty.flags)
+
         val serializedNameAnnotation = aptVariableElement?.getAnnotation(SerializedName::class.java)
         val keys = if (serializedNameAnnotation != null) {
             val result = mutableListOf<String>()
@@ -37,7 +39,7 @@ class KmPropertyResolver(
             FieldInitializer.DEFAULT
         }
         val ktType = resolveKtType()
-        return KaptKtField(
+        return KtValueField(
             isFinal = isFinal,
             fieldName = fieldName,
             keys = keys,
@@ -49,7 +51,7 @@ class KmPropertyResolver(
         )
     }
 
-    private fun resolveKtType(): IType {
+    private fun resolveKtType(): ElementType {
         return KmTypeResolver(
             processingEnvironment,
             aptVariableElement,

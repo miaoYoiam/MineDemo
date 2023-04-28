@@ -2,6 +2,11 @@ package com.example.mine.lib_gson_adapter.scan
 
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.base.*
+import com.example.mine.lib_gson_adapter.modifierStatic
+import com.example.mine.lib_gson_adapter.modifierTransient
+import com.example.mine.lib_gson_adapter.scan.resolver.KmClassKindResolver
+import com.example.mine.lib_gson_adapter.scan.resolver.KmPropertyResolver
+import com.example.mine.lib_gson_adapter.scan.resolver.KmValueParameterResolver
 import kotlinx.metadata.*
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.*
@@ -12,25 +17,30 @@ import javax.lang.model.element.*
  */
 class DataClassScanner(
     private val processingEnvironment: ProcessingEnvironment,
-    private val belongingClass: TypeElement,
+    private val targetClass: TypeElement,
     private val kmClassConvert: KmClassConvert,
     private val logger: Logger
 ) : ClassScanner() {
     private val kmClass: KmClass by lazy {
-        kmClassConvert.get(belongingClass)
+        kmClassConvert.get(targetClass)
     }
 
-    override val cKind: ClassKind
-        get() = KmClassKindResolver(belongingClass, kmClassConvert, logger).getClassKind()
+    override val classKind: ClassKind by lazy {
+        logger.i("---| DataClassScanner getClassKind")
+        KmClassKindResolver(targetClass, kmClassConvert, logger).getClassKind()
+    }
 
-    override val classType: IType
-        get() = resolveType()
+    override val classType: ElementType by lazy {
+        logger.i("---| DataClassScanner classType")
+        resolveType()
+    }
 
-    override val field: List<IFiled>
-        get() = scanPrimaryConstructor() + scanBody() + scanSupers()
+    override val field: List<ElementFiled> by lazy {
+        scanPrimaryConstructor() + scanBody() + scanSupers()
+    }
 
-    private fun resolveType(): IType {
-        val generics = belongingClass.typeParameters.map {
+    private fun resolveType(): ElementType {
+        val generics = targetClass.typeParameters.map {
             VariableType(
                 rawType = it.simpleName.toString(),
                 nullable = false,
@@ -41,12 +51,12 @@ class DataClassScanner(
         }
 
         val type = KaptKtType(
-            rawType = belongingClass.qualifiedName.toString(),
+            rawType = targetClass.qualifiedName.toString(),
             nullable = false,
             variance = Variance.INVARIANT,
             jsonTokenName = JsonTokenDelegate.OBJECT,
             generics = generics,
-            target = belongingClass
+            target = targetClass
         )
 
         logger.i("---| resolveClassKtType：${type}")
@@ -54,8 +64,15 @@ class DataClassScanner(
         return type
     }
 
-    private fun scanPrimaryConstructor(): List<IFiled> {
-        if (belongingClass.kind != ElementKind.CLASS) {
+
+    /**
+     * VariableElement:用于解析和处理Java源代码中的注解信息，以及生成新的Java源代码
+     *
+     * KmValueParameter:表示函数或构造函数的参数
+     */
+    private fun scanPrimaryConstructor(): List<ElementFiled> {
+        logger.i("---| scanPrimaryConstructor start")
+        if (targetClass.kind != ElementKind.CLASS) {
             return emptyList()
         }
 
@@ -63,35 +80,46 @@ class DataClassScanner(
         val primaryConstructor = kmClass.constructors.single {
             !Flag.Constructor.IS_SECONDARY(it.flags)
         }
-        //获取参数 除了 transient 的
+        //获取主构造函数里面的参数
         val list = primaryConstructor.valueParameters.asSequence().filter {
-            val aptVariableElement = findAptVariableElement(it.name)
-            aptVariableElement != null && !aptVariableElement.modifiers.contains(Modifier.TRANSIENT)
+            val element = findVariableElement(it.name)
+            element != null && !element.modifierTransient()
         }.map {
-            resolveKtField(it)
+            logger.w("---| KmValueParameterResolver start ${it.name}")
+            /**
+             * KtValueField(isFinal=true, fieldName=stringValue, keys=[foo_string], type=KaptKtType(rawType=kotlin.String, nullable=false, variance=INVARIANT, jsonTokenName=STRING, generics=[], target=stringValue), initializer=DEFAULT, declarationScope=PRIMARY_CONSTRUCTOR, transient=false, target=stringValue)
+             */
+            val value = KmValueParameterResolver(
+                processingEnvironment = processingEnvironment,
+                targetClass = targetClass,
+                variableElement = findVariableElement(it.name),
+                kmValueParameter = it,
+                logger = logger
+            ).resolveKmValueParameter()
+            logger.w("---| KmValueParameterResolver end：${value}")
+            value
         }.toList()
-
-        logger.i("---| scanPrimaryConstructor：${list}")
-
+        logger.i("---| scanPrimaryConstructor end")
         return list
     }
 
-    private fun findAptVariableElement(fieldName: String): VariableElement? {
-        return belongingClass.enclosedElements.asSequence().filter {
+    private fun findVariableElement(fieldName: String): VariableElement? {
+        return targetClass.enclosedElements.asSequence().filter {
             it.kind == ElementKind.FIELD
         }.filterNot {
-            it.modifiers.contains(Modifier.STATIC) || it.modifiers.contains(Modifier.TRANSIENT)
+            it.modifierStatic() || it.modifierTransient()
         }.find {
             val elementName = it.simpleName.toString()
-            elementName == fieldName || elementName == "$fieldName\$delegate"
+//            logger.i("---| findVariableElement： elementName：${elementName}  fieldName：${fieldName}")
+            elementName == fieldName
         } as? VariableElement
     }
 
-    private fun resolveKtField(kmProperty: KmProperty): IFiled {
+    private fun resolveKtField(kmProperty: KmProperty): ElementFiled {
         val resolver = KmPropertyResolver(
             processingEnvironment,
-            belongingClass,
-            findAptVariableElement(kmProperty.name),
+            targetClass,
+            findVariableElement(kmProperty.name),
             kmProperty
         ).resolveKmProperty()
 
@@ -100,49 +128,39 @@ class DataClassScanner(
         return resolver
     }
 
-    private fun resolveKtField(kmValueParameter: KmValueParameter): IFiled {
-        val resolver = KmValueParameterResolver(
-            processingEnvironment,
-            belongingClass,
-            findAptVariableElement(kmValueParameter.name),
-            kmValueParameter,
-            logger
-        ).resolveKmValueParameter()
-
-        logger.i("---| resolveKtField：${resolver}")
-
-        return resolver
-    }
-
-    private fun scanBody(): List<IFiled> {
+    private fun scanBody(): List<ElementFiled> {
+        logger.i("---| scanBody start")
         val constructorFieldNames = kmClass.constructors.map { kmConstructor ->
             kmConstructor.valueParameters.map { it.name }
         }.flatten().distinct()
+        //剔除在主构造函数里面出现的参数
         val list = kmClass.properties.asSequence().filter {
+            logger.i("---| scanBody name :${it.name}")
             it.name !in constructorFieldNames
         }.filter {
-            val aptVariableElement = findAptVariableElement(it.name)
-            if (cKind == ClassKind.INTERFACE) {
+            val aptVariableElement = findVariableElement(it.name)
+            if (classKind == ClassKind.INTERFACE) {
                 true
             } else {
-                aptVariableElement != null && !aptVariableElement.modifiers.contains(Modifier.TRANSIENT)
+                aptVariableElement != null && !aptVariableElement.modifierTransient()
             }
         }.map {
             resolveKtField(it)
         }.toList()
 
-        logger.i("---| scanBody：${list}")
+        logger.i("---| scanBody end :${list}")
 
         return list
     }
 
-    private fun scanSupers(): List<IFiled> {
+    private fun scanSupers(): List<ElementFiled> {
+        logger.i("---| scanSupers start")
         val list = kmClass.supertypes.asSequence().mapNotNull {
             val classifier = it.classifier as? KmClassifier.Class
             if (classifier == null) {
-                logger.e("Unexpected super type ${belongingClass.qualifiedName}", belongingClass)
+                logger.e("Unexpected super type ${targetClass.qualifiedName}", targetClass)
                 throw IllegalStateException(
-                    "Unexpected super type ${belongingClass.qualifiedName}"
+                    "Unexpected super type ${targetClass.qualifiedName}"
                 )
             }
             classifier.name.replace("/", ".")
@@ -151,9 +169,9 @@ class DataClassScanner(
         }.map { name ->
             val typeElement = processingEnvironment.elementUtils.getTypeElement(name)
             if (typeElement == null) {
-                logger.e("Unexpected super type ${belongingClass.qualifiedName}", belongingClass)
+                logger.e("Unexpected super type ${targetClass.qualifiedName}", targetClass)
                 throw IllegalStateException(
-                    "Unexpected super type ${belongingClass.qualifiedName}"
+                    "Unexpected super type ${targetClass.qualifiedName}"
                 )
             } else {
                 typeElement
@@ -166,7 +184,7 @@ class DataClassScanner(
                 logger
             )
         }.map { classScanner ->
-            val superTypeElement = classScanner.belongingClass
+            val superTypeElement = classScanner.targetClass
             val declarationScope = if (superTypeElement.kind == ElementKind.CLASS) {
                 DeclarationScope.SUPER_CLASS
             } else {
@@ -175,7 +193,7 @@ class DataClassScanner(
             classScanner.field.map { it.copy(declarationScope = declarationScope) }
         }.flatten().toList()
 
-        logger.i("---| scanSupers：${list}")
+        logger.i("---| scanSupers end：${list}")
 
         return list
     }

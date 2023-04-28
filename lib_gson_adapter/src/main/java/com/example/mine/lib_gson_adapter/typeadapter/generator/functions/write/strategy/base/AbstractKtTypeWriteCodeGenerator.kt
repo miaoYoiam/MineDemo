@@ -4,7 +4,7 @@ package com.example.mine.lib_gson_adapter.typeadapter.generator.functions.write.
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.TypeAdapterClassGenConfig
 import com.example.mine.lib_gson_adapter.WRITER
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.typeadapter.getWritingTempFieldName
 import com.squareup.kotlinpoet.CodeBlock
 
@@ -15,7 +15,7 @@ internal abstract class AbstractKtTypeWriteCodeGenerator(
 
     final override fun generate(
         fieldName: String,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ): CodeBlock {
         val codeBlockBuilder = CodeBlock.Builder()
@@ -38,7 +38,7 @@ internal abstract class AbstractKtTypeWriteCodeGenerator(
     abstract fun realGenerate(
         fieldName: String,
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         tempFieldName: String
     )
 }

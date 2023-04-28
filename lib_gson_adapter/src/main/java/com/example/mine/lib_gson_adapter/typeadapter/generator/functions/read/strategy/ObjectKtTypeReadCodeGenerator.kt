@@ -4,7 +4,7 @@ package com.example.mine.lib_gson_adapter.typeadapter.generator.functions.read.s
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.READER
 import com.example.mine.lib_gson_adapter.TypeAdapterClassGenConfig
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.base.asTypeName
 import com.example.mine.lib_gson_adapter.typeadapter.generator.functions.read.strategy.base.AbstractKtTypeReadCodeGenerator
 import com.example.mine.lib_gson_adapter.typeadapter.getReadingTempFieldName
@@ -18,7 +18,7 @@ internal class ObjectKtTypeReadCodeGenerator(
 
     override fun enterExpectTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
         val tempFieldName = ktType.getReadingTempFieldName()
@@ -29,7 +29,7 @@ internal class ObjectKtTypeReadCodeGenerator(
 
     override fun enterNullTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
         when {
@@ -51,7 +51,7 @@ internal class ObjectKtTypeReadCodeGenerator(
 
     override fun enterOtherTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
         generateExpectTokenButTokenBlock(codeBlockBuilder, ktType)

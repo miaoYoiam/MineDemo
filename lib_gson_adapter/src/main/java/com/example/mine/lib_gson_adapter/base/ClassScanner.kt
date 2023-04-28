@@ -7,9 +7,9 @@ package com.example.mine.lib_gson_adapter.base
  * @param cKind: javax.lang.model.element.ElementKind
  */
 abstract class ClassScanner {
-    abstract val cKind: ClassKind
+    abstract val classKind: ClassKind
 
-    abstract val classType: IType
+    abstract val classType: ElementType
 
-    abstract val field: List<IFiled>
+    abstract val field: List<ElementFiled>
 }

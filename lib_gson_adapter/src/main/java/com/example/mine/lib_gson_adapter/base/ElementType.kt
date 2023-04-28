@@ -4,7 +4,7 @@ package com.example.mine.lib_gson_adapter.base
  * Day：2023/4/27 15:33
  * @author zhanglei
  */
-abstract class IType {
+abstract class ElementType {
 
     /**
      * Gson.TypeToken.the raw (non-generic) type for this type.
@@ -20,15 +20,15 @@ abstract class IType {
     //映射Gson JsonToken
     abstract val jsonTokenName: JsonTokenDelegate
 
-    //泛型
-    abstract val generics: List<IType>
+    //集合泛型
+    abstract val generics: List<ElementType>
 
     abstract fun copy(
         nullable: Boolean = this.nullable,
         variance: Variance = this.variance
-    ): IType
+    ): ElementType
 
-    fun dfs(predicate: IType.() -> Boolean): Set<IType> {
+    fun dfs(predicate: ElementType.() -> Boolean): Set<ElementType> {
         val result = if (predicate(this)) {
             setOf(this)
         } else {

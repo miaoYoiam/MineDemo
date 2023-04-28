@@ -1,6 +1,6 @@
 package com.example.mine.lib_gson_adapter.typeadapter
 
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.google.gson.TypeAdapter
 import com.google.gson.TypeAdapterFactory
 import com.squareup.kotlinpoet.TypeSpec
@@ -19,7 +19,7 @@ interface TypeAdapterFactoryGenerator {
      */
     fun generate(
         typeAdapterFactoryName: String,
-        classToTypeAdapters: Set<Pair<IType, IType>>
+        classToTypeAdapters: Set<Pair<ElementType, ElementType>>
     ): TypeSpec
 
     interface Factory {

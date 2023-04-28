@@ -1,6 +1,6 @@
-package com.example.mine.lib_gson_adapter.scan
+package com.example.mine.lib_gson_adapter.scan.resolver
 
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.base.javaType
 import com.squareup.kotlinpoet.*
 import kotlinx.metadata.KmClassifier
@@ -14,7 +14,7 @@ abstract class AbstractKmTypeResolver(
     protected val kmType: KmType
 ) {
 
-    abstract val resolvedKtType: IType
+    abstract val resolvedKtType: ElementType
 
     private val elementUtils = processingEnvironment.elementUtils
     private val typeUtils = processingEnvironment.typeUtils
@@ -89,7 +89,6 @@ abstract class AbstractKmTypeResolver(
                 isInterfaceOf(typeName.rawType, interfaceName)
             }
             is WildcardTypeName -> {
-                // TODO inTypes or outTypes?
                 false
             }
             else -> false

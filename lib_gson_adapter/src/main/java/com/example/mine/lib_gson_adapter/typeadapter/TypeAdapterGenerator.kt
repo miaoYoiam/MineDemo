@@ -3,7 +3,7 @@ package com.example.mine.lib_gson_adapter.typeadapter
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.TypeAdapterClassGenConfig
 import com.example.mine.lib_gson_adapter.base.ClassScanner
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.google.gson.TypeAdapter
 import com.squareup.kotlinpoet.TypeSpec
 
@@ -20,7 +20,7 @@ interface TypeAdapterGenerator {
      */
     fun generate(
         scanner: ClassScanner,
-        classFilter: Set<IType>,
+        classFilter: Set<ElementType>,
         config: TypeAdapterClassGenConfig = TypeAdapterClassGenConfig()
     ): TypeSpec
 

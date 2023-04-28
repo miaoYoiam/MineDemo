@@ -4,7 +4,7 @@ package com.example.mine.lib_gson_adapter.base
  * Day：2023/4/27 15:47
  * @author zhanglei
  */
-abstract class IFiled {
+abstract class ElementFiled {
 
     /**
      * 是否可变
@@ -24,7 +24,7 @@ abstract class IFiled {
     /**
      * 类型
      */
-    abstract val type: IType
+    abstract val type: ElementType
 
     /**
      * 初始化器，是否有默认值，或者没有初始化器（包括delegate）
@@ -41,7 +41,7 @@ abstract class IFiled {
     /**
      * 复制一个[KtField]
      */
-    abstract fun copy(declarationScope: DeclarationScope = this.declarationScope): IFiled
+    abstract fun copy(declarationScope: DeclarationScope = this.declarationScope): ElementFiled
 
     /**
      * 转换成可读的字符串，如:
@@ -63,4 +63,6 @@ abstract class IFiled {
         append(" keys: ")
         append(keys.toString())
     }
+
+
 }

@@ -3,7 +3,7 @@ package com.example.mine.lib_gson_adapter.typeadapter.generator.functions.read
 import com.example.mine.lib_gson_adapter.GSON
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.base.ClassScanner
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.base.asTypeName
 import com.example.mine.lib_gson_adapter.typeadapter.getTypeAdapterClassName
 import com.example.mine.lib_gson_adapter.typeadapter.getTypeAdapterFieldName
@@ -13,15 +13,14 @@ import com.squareup.kotlinpoet.*
 
 internal class FieldGenerator(private val logger: Logger) {
 
-    private lateinit var classFilterMap: Map<String, IType>
+    private lateinit var classFilterMap: Map<String, ElementType>
 
-    fun setClassFilter(classFilterMap: Map<String, IType>) {
+    fun setClassFilter(classFilterMap: Map<String, ElementType>) {
         this.classFilterMap = classFilterMap
     }
 
-    fun generateByKtType(scanner: ClassScanner, ktType: IType): PropertySpec {
-        val isRegisteredType =
-            classFilterMap.containsKey(ktType.rawType) && ktType.generics.isEmpty()
+    fun generateByKtType(scanner: ClassScanner, ktType: ElementType): PropertySpec {
+        val isRegisteredType = classFilterMap.containsKey(ktType.rawType) && ktType.generics.isEmpty()
         val adapterFieldName = ktType.getTypeAdapterFieldName()
         val typeName = ktType.asTypeName(ignoreVariance = true, ignoreNullability = true)
         val typeAdapterCodeBlock = if (isRegisteredType) {

@@ -100,7 +100,7 @@ private fun <T : TypeName> T.transform(transformer: (String) -> String): T {
     }.copy(nullable = isNullable) as T
 }
 
-fun IType.asTypeName(
+fun ElementType.asTypeName(
     ignoreVariance: Boolean = false,
     ignoreNullability: Boolean = false
 ): TypeName {

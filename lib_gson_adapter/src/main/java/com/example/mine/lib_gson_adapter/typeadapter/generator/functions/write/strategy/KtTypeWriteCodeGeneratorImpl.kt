@@ -2,7 +2,7 @@ package com.example.mine.lib_gson_adapter.typeadapter.generator.functions.write.
 
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.TypeAdapterClassGenConfig
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.typeadapter.generator.functions.write.strategy.base.KtTypeWriteCodeGenerator
 
 import com.squareup.kotlinpoet.CodeBlock
@@ -13,7 +13,7 @@ internal class KtTypeWriteCodeGeneratorImpl(
 ) : KtTypeWriteCodeGenerator {
     override fun generate(
         fieldName: String,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ): CodeBlock {
         return when {

@@ -1,7 +1,8 @@
-package com.example.mine.lib_gson_adapter.scan
+package com.example.mine.lib_gson_adapter.scan.resolver
 
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.base.ClassKind
+import com.example.mine.lib_gson_adapter.scan.KmClassConvert
 import kotlinx.metadata.Flag
 import javax.lang.model.element.TypeElement
 
@@ -19,7 +20,7 @@ class KmClassKindResolver(
     }
 
     fun getClassKind(): ClassKind {
-        return when {
+        val result = when {
             Flag.Class.IS_CLASS(kmClass.flags) -> ClassKind.CLASS
             Flag.Class.IS_ANNOTATION_CLASS(kmClass.flags) -> ClassKind.ANNOTATION
             Flag.Class.IS_ENUM_ENTRY(kmClass.flags) -> ClassKind.ENUM_ENTRY
@@ -31,5 +32,8 @@ class KmClassKindResolver(
                 throw IllegalArgumentException("unexpected class kind on class $belongingClass")
             }
         }
+
+        logger.i("---| getClassKind :$result")
+        return result
     }
 }

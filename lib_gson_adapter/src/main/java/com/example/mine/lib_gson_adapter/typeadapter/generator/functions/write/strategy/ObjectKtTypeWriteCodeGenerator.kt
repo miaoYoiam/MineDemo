@@ -3,7 +3,7 @@ package com.example.mine.lib_gson_adapter.typeadapter.generator.functions.write.
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.TypeAdapterClassGenConfig
 import com.example.mine.lib_gson_adapter.WRITER
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.typeadapter.generator.functions.write.strategy.base.AbstractKtTypeWriteCodeGenerator
 import com.example.mine.lib_gson_adapter.typeadapter.getTypeAdapterFieldName
 
@@ -17,7 +17,7 @@ internal class ObjectKtTypeWriteCodeGenerator(
     override fun realGenerate(
         fieldName: String,
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         tempFieldName: String
     ) {
         val typeAdapterFieldName = ktType.getTypeAdapterFieldName()

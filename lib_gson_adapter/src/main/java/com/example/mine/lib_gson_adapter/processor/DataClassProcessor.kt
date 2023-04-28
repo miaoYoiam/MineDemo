@@ -24,7 +24,7 @@ import javax.lang.model.element.TypeElement
  * @author zhanglei
  */
 @AutoService(Processor::class)
-class GsonTypeAdapterProcessor : AbstractProcessor() {
+class DataClassProcessor : AbstractProcessor() {
 
     private val logger by lazy {
         Logger(processingEnv)
@@ -61,7 +61,7 @@ class GsonTypeAdapterProcessor : AbstractProcessor() {
         for (i in debugList.indices) {
             val element = debugList[i]
             logger.d("element:${element}")
-            //
+            //泛型信息
             logger.d("--|typeParameters:${element.typeParameters}")
             //包名+类名
             logger.d("--|qualifiedName:${element.qualifiedName}")
@@ -79,7 +79,7 @@ class GsonTypeAdapterProcessor : AbstractProcessor() {
                 logger.d("--|modifiers:$m")
             }
 
-            //包裹内容：FIELD、METHOD
+            //包裹所有子元素：FIELD、METHOD
             val enclosedElementIterator = element.enclosedElements.iterator()
             while (enclosedElementIterator.hasNext()) {
                 val e = enclosedElementIterator.next()
@@ -89,6 +89,7 @@ class GsonTypeAdapterProcessor : AbstractProcessor() {
                 logger.d("----|type:${e.asType()}")
             }
         }
+        //解析每一个注解Data class
         val classScanners = roundEnv.annotatedClasses.map {
             DataClassScanner(processingEnv, it, kmClassConvert, logger)
         }.toList()
@@ -98,12 +99,16 @@ class GsonTypeAdapterProcessor : AbstractProcessor() {
             return false
         }
 
+        logger.i(">>>>>>>>>>>> data classScanners complete <<<<<<<<<<<<<<")
+
         val classFilter = classScanners.map { it.classType }.toSet()
 
         val scannerToTypeSpecs = classScanners.map { classScanner ->
+            logger.i("---|---|---| start ${classScanner.classType.to2String()} |---|---|---|---")
+
             val classType = classScanner.classType
             classScanner.field.forEach {
-                logger.i("${classScanner.cKind} ${classType.to2String()} >>> ${it.to2String()}")
+                logger.i(" classScanner field ${classScanner.classKind} ${classType.to2String()} >>> ${it.to2String()}")
             }
             val typeAdapterClassGenerator = TypeAdapterGeneratorImpl(logger)
             val typeAdapterClassGenConfig = TypeAdapterClassGenConfig(
@@ -116,6 +121,8 @@ class GsonTypeAdapterProcessor : AbstractProcessor() {
             ).toBuilder().apply {
                 (classType as IElementOwner).target?.let { addOriginatingElement(it) }
             }.build()
+
+            logger.i("---|---|---| end ${classScanner.classType.to2String()} |---|---|---|---")
             classScanner to typeSpec
         }
 

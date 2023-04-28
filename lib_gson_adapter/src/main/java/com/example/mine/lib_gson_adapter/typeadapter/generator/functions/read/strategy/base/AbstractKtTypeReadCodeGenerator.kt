@@ -3,7 +3,7 @@ package com.example.mine.lib_gson_adapter.typeadapter.generator.functions.read.s
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.READER
 import com.example.mine.lib_gson_adapter.TypeAdapterClassGenConfig
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.typeadapter.getPeekedFieldName
 import com.google.gson.stream.JsonToken
 import com.squareup.kotlinpoet.CodeBlock
@@ -18,7 +18,7 @@ internal abstract class AbstractKtTypeReadCodeGenerator(
     protected val strictType: Boolean = config.strictType
 
     final override fun generate(
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ): CodeBlock {
         val codeBlockBuilder = CodeBlock.Builder()
@@ -48,25 +48,25 @@ internal abstract class AbstractKtTypeReadCodeGenerator(
 
     abstract fun enterExpectTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     )
 
     abstract fun enterNullTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     )
 
     abstract fun enterOtherTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     )
 
     protected fun generateExpectTokenButTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType
+        ktType: ElementType
     ) {
         val peekedFieldName = ktType.getPeekedFieldName()
         codeBlockBuilder.addStatement(

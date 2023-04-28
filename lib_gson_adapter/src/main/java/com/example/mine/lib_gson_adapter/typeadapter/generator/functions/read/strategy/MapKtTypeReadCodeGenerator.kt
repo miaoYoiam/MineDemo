@@ -4,7 +4,7 @@ package com.example.mine.lib_gson_adapter.typeadapter.generator.functions.read.s
 import com.example.mine.lib_gson_adapter.Logger
 import com.example.mine.lib_gson_adapter.READER
 import com.example.mine.lib_gson_adapter.TypeAdapterClassGenConfig
-import com.example.mine.lib_gson_adapter.base.IType
+import com.example.mine.lib_gson_adapter.base.ElementType
 import com.example.mine.lib_gson_adapter.base.JsonTokenDelegate
 import com.example.mine.lib_gson_adapter.base.asTypeName
 import com.example.mine.lib_gson_adapter.base.kotlinPrimitiveType
@@ -20,7 +20,7 @@ internal class MapKtTypeReadCodeGenerator(
 ) : AbstractKtTypeReadCodeGenerator(logger, config) {
     override fun enterExpectTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
         val tempFieldName = ktType.getReadingTempFieldName()
@@ -54,7 +54,7 @@ internal class MapKtTypeReadCodeGenerator(
 
     override fun enterNullTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
         when {
@@ -73,13 +73,13 @@ internal class MapKtTypeReadCodeGenerator(
 
     override fun enterOtherTokenBlock(
         codeBlockBuilder: CodeBlock.Builder,
-        ktType: IType,
+        ktType: ElementType,
         codegenHook: (CodeBlock.Builder, String) -> Unit
     ) {
         generateExpectTokenButTokenBlock(codeBlockBuilder, ktType)
     }
 
-    private fun getMapInitializer(ktType: IType): String {
+    private fun getMapInitializer(ktType: ElementType): String {
         return when (ktType.jsonTokenName) {
             JsonTokenDelegate.MAP -> {
                 "mutableMapOf"
